@@ -18,22 +18,29 @@ function buscaminasGame(
     this.minas = intMinas;
     this.virtualTable = [];
     this.ArrMinas = [];
+    this.banderas = intMinas;
 
     if (intNivel == 0) {
         this.filas = 8;
         this.columnas = 8;
         this.minas = 8;
+    }else if (intNivel == 1) {
+        this.filas = 16;
+        this.columnas = 16;
+        this.minas = 40;
     }
 }
 
 buscaminasGame.prototype.genCoorMinas = function () {
     const intCant = this.minas;
+    const intFilas = this.filas;
+    const intColumnas = this.columnas;
     let secure = 0;
 
     while (this.ArrMinas.length < intCant) {
         let isCoorExist = false;
-        let intCoorX = Math.floor(Math.random() * intCant);
-        let intCoorY = Math.floor(Math.random() * intCant);
+        let intCoorX = Math.floor(Math.random() * intFilas);
+        let intCoorY = Math.floor(Math.random() * intColumnas);
 
         let ArrMinasSize = this.ArrMinas.length;
         if (ArrMinasSize > 0) {
@@ -53,46 +60,20 @@ buscaminasGame.prototype.genCoorMinas = function () {
         }
 
         secure++;
-        if (secure >= 30) {
+        if (secure >= 180) {
             break;
         }
     }
 };
 
-// const genCoorMinas = (intCant = 8) => {
-//     const ArrMinas = [];
-//     while (ArrMinas.length < intCant) {
-//         let isCoorExist = false;
-//         let intCoorX = Math.floor(Math.random() * intCant);
-//         let intCoorY = Math.floor(Math.random() * intCant);
-
-//         let ArrMinasSize = ArrMinas.length;
-//         if (ArrMinasSize > 0) {
-//             for (let i = 0; i < ArrMinasSize; i++) {
-//                 if (
-//                     ArrMinas[i][0] === intCoorX &&
-//                     ArrMinas[i][1] === intCoorY
-//                 ) {
-//                     isCoorExist = true;
-//                 }
-//             }
-//         }
-
-//         if (!isCoorExist) {
-//             let subMtrz = [intCoorX, intCoorY];
-//             ArrMinas.push(subMtrz);
-//         }
-//     }
-//     return ArrMinas;
-// };
-
 buscaminasGame.prototype.genVirtualTable = function () {
-    const intCant = this.minas;
+    const intFilas = this.filas;
+    const intColumnas = this.columnas;
 
-    for (let i = 0; i < intCant; i++) {
+    for (let i = 0; i < intFilas; i++) {
         let arrTableRow = [];
 
-        for (let j = 0; j < intCant; j++) {
+        for (let j = 0; j < intColumnas; j++) {
             let objCell = new objCelda(i, j, 0, 0);
 
             let arrMinas = this.ArrMinas;
@@ -114,132 +95,73 @@ buscaminasGame.prototype.genVirtualTable = function () {
     }
 };
 
-// const genVirtualTable = (intCant = 8) => {
-//     let arrVirtualTable = [];
-//     for (let i = 0; i < intCant; i++) {
-//         let arrTableRow = [];
-
-//         for (let j = 0; j < intCant; j++) {
-//             let objCell = new objCelda(i, j, 0, 0);
-
-//             let arrMinas = genCoorMinas();
-//             let arrMinasSize = arrMinas.length;
-//             if (arrMinasSize > 0) {
-//                 for (let k = 0; k < arrMinasSize; k++) {
-//                     if (
-//                         arrMinas[k][0] === objCell.x &&
-//                         arrMinas[k][1] === objCell.y
-//                     ) {
-//                         objCell.type = 1;
-//                     }
-//                 }
-//             }
-
-//             arrTableRow[j] = objCell;
-//         }
-//         arrVirtualTable[i] = arrTableRow;
-//     }
-//     return arrVirtualTable;
-// };
-
-// function openArea(x, y) {}
-
 buscaminasGame.prototype.genHtmlTable = function () {
-    let tagContentTable = document.getElementById("table-content");
+    const tagContentTable = document.getElementById("table-content");
+    const intFilas = this.filas;
+    const intColumnas = this.columnas;
 
     this.genCoorMinas();
     this.genVirtualTable();
-    let virtualTable = this.virtualTable;
 
-    for (let i = 0; i < virtualTable.length; i++) {
-        let virtualRow = virtualTable[i];
+    for (let i = 0; i < intFilas; i++) {
         let elementRow = document.createElement("tr");
 
-        for (let j = 0; j < virtualRow.length; j++) {
+        for (let j = 0; j < intColumnas; j++) {
             let elementCell = document.createElement("td");
             elementCell.setAttribute("class", "block-content");
             elementCell.setAttribute("id", `celda-${i}-${j}`);
-            elementCell.addEventListener("mouseup", function (e) {
-                console.log(e);
-                console.log(this.id);
-                console.log(this.childNodes[0].childNodes[0]);
-                let elementIconChild = this.childNodes[0].childNodes[0];
+            elementCell.addEventListener("mouseup", (e) => {
+                let elementCelda = document.querySelector(`#celda-${i}-${j}`);
+                let elementIconChild = document.querySelector(
+                    `#celda-${i}-${j} i`
+                );
+                console.log(e.button);
                 switch (e.button) {
                     case 0:
-                        if (virtualTable[i][j].type === 1) {
-                            this.classList.add("danger");
-                            alert("MINA!");
-                        }
-
                         if (
-                            virtualTable[i][j].state == 1 ||
-                            virtualTable[i][j].state == 2
+                            this.virtualTable[i][j].state == 1 ||
+                            this.virtualTable[i][j].state == 2
                         ) {
                             return;
                         }
 
-                        this.classList.add("fade");
-                        // openArea(i,j)
-                        // function openArea(x, y) {
-                        //     console.log(
-                        //         `Estado ${virtualTable[x][y].state} \n Ejex = ${x} | Ejey = ${y}`
-                        //     );
-                        //     if (
-                        //         virtualTable[x][y].state == 1 ||
-                        //         virtualTable[x][y].state == 2
-                        //     ) {
-                        //         return;
-                        //     }
+                        if (this.virtualTable[i][j].type === 1) {
+                            elementCelda.classList.add("danger");
+                            alert("MINA!");
+                            // ! LOSSE GAME
+                        }
 
-                        //     let celda = document.getElementById(
-                        //         `celda-${x}-${y}`
-                        //     );
-                        //     celda.classList.add("fade");
+                        elementIconChild.classList.add("fade");
 
-                        //     virtualTable[x][y].state = 1;
-                        //     if (
-                        //         virtualTable[x][y].number == 0 &&
-                        //         virtualTable[x][y].type != 1
-                        //     ) {
-                        //         for (let iniX = -1; iniX <= 1; iniX++) {
-                        //             for (let iniY = -1; iniY <= 1; iniY++) {
-                        //                 if (iniX === 0 && iniY === 0) {
-                        //                     continue;
-                        //                 }
-                        //                 if (
-                        //                     x - iniX < 0 ||
-                        //                     y - iniY < 0 ||
-                        //                     x - iniX >= 8 ||
-                        //                     y - iniY >= 8
-                        //                 ) {
-                        //                     continue;
-                        //                 }
-
-                        //                 openArea(x - iniX, y - iniY);
-                        //             }
-                        //         }
-                        //     }
-                        // }
-                        // openArea(i, j);
-                        this.openArea(i,j);
+                        this.openArea(i, j);
 
                         break;
+                    case 1:
+                        if(this.virtualTable[i][j].state !== 1){
+                            console.log('scroll return');
+                            return;
+                        }
+                        console.log('scroll clic');
+                        break;
                     case 2:
-                        if (virtualTable[i][j].state == 1) {
+                        if (this.virtualTable[i][j].state == 1) {
                             return;
                         }
-                        if (virtualTable[i][j].state == 2) {
+                        if (this.virtualTable[i][j].state == 2) {
                             elementIconChild.textContent = "";
-                            virtualTable[i][j].state == 0;
+                            this.virtualTable[i][j].state = 0;
+                            this.banderas++;
                             return;
                         }
-                        virtualTable[i][j].state = 2;
+                        this.virtualTable[i][j].state = 2;
                         elementIconChild.textContent = "B";
+                        this.banderas--;
                         break;
 
                     default:
                         break;
                 }
+                this.victoria();
             });
 
             let elementDivBox = document.createElement("div");
@@ -250,21 +172,50 @@ buscaminasGame.prototype.genHtmlTable = function () {
             elementDivBox.appendChild(elementIcon);
             elementCell.appendChild(elementDivBox);
             elementRow.appendChild(elementCell);
+
+            // create numbers
+            this.genNumberMines(i, j);
+            if (this.virtualTable[i][j].type === 1) {
+                this.virtualTable[i][j].number = -1;
+            }
         }
         tagContentTable.appendChild(elementRow);
     }
 };
 
+buscaminasGame.prototype.genNumberMines = function (x, y) {
+    let intCountMinas = 0;
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) {
+                continue;
+            }
+            if (x - i < 0 || y - j < 0 || x - i >= 8 || y - j >= 8) {
+                continue;
+            }
+
+            if (this.virtualTable[x - i][y - j].type === 1) {
+                intCountMinas++;
+            }
+        }
+    }
+    this.virtualTable[x][y].number = intCountMinas;
+};
+
 buscaminasGame.prototype.openArea = function (x, y) {
     if (
         this.virtualTable[x][y].state === 1 ||
-        this.virtualTable[x][y.state === 2]
+        this.virtualTable[x][y].state === 2
     ) {
         return;
     }
 
     let elementCelda = document.getElementById(`celda-${x}-${y}`);
     elementCelda.classList.add("fade");
+    elementCelda.textContent =
+        this.virtualTable[x][y].number == 0
+            ? ""
+            : this.virtualTable[x][y].number;
 
     this.virtualTable[x][y].state = 1;
 
@@ -281,123 +232,29 @@ buscaminasGame.prototype.openArea = function (x, y) {
                     continue;
                 }
 
+                this.openArea(x - i, y - j);
             }
         }
     }
 };
 
-function openArea(x, y) {
-    if (ejeX[x][y].state == 1 || ejeX[x][y].state == 2) {
-        return;
-    }
-    let celda = document.getElementById(`celda-${x}-${y}`);
-    celda.classList.add("fade");
-    ejeX[x][y].state = 1;
-    if (ejeX[x][y].number == 0 && ejeX[x][y].type != 1) {
-        for (let iniX = -1; iniX <= 1; iniX++) {
-            for (let iniY = -1; iniY <= 1; iniY++) {
-                if (iniX === 0 && iniY === 0) {
+buscaminasGame.prototype.victoria = function () {
+    for (let i = 0; i < this.filas; i++) {
+        for (let j = 0; j < this.columnas; j++) {
+            if (this.virtualTable[i][j].state !== 1) {
+                if (this.virtualTable[i][j].type === 1) {
                     continue;
+                } else {
+                    return;
                 }
-                if (
-                    x - iniX < 0 ||
-                    y - iniY < 0 ||
-                    x - iniX >= 8 ||
-                    y - iniY >= 8
-                ) {
-                    continue;
-                }
-
-                openArea(x - iniX, y - iniY);
             }
         }
     }
-}
-
-// const genHtmlTable = () => {
-//     let tagContentTable = document.getElementById("table-content");
-//     let virtualTable = genVirtualTable(8);
-//     for (let i = 0; i < virtualTable.length; i++) {
-//         let virtualRow = virtualTable[i];
-//         let elementRow = document.createElement("tr");
-
-//         for (let j = 0; j < virtualRow.length; j++) {
-//             let elementCell = document.createElement("td");
-//             elementCell.setAttribute("class", "block-content");
-//             elementCell.setAttribute("id", `celda-${i}-${j}`);
-//             elementCell.addEventListener("mouseup", function (e) {
-//                 console.log(e);
-//                 console.log(this.id);
-//                 console.log(this.childNodes[0].childNodes[0]);
-//                 let elementIconChild = this.childNodes[0].childNodes[0];
-//                 switch (e.button) {
-//                     case 0:
-//                         if (virtualTable[i][j].type === 1) {
-//                             this.classList.add("danger");
-//                         }
-
-//                         if (
-//                             virtualTable[i][j].state == 1 ||
-//                             virtualTable[i][j].state == 2
-//                         ) {
-//                             return;
-//                         }
-
-//                         this.classList.add("fade");
-//                         virtualTable[i][j].state = 1;
-//                         if (
-//                             virtualTable[i][j].number == 0 &&
-//                             virtualTable[i][j].type != 1
-//                         ) {
-//                             for (let iniX = -1; iniX <= 1; iniX++) {
-//                                 for (let iniY = -1; iniY <= 1; iniY++) {
-//                                     if (iniX === 0 && iniY === 0) {
-//                                         continue;
-//                                     }
-//                                     if (
-//                                         i - iniX < 0 ||
-//                                         j - iniY < 0 ||
-//                                         i - iniX >= 8 ||
-//                                         j - iniY >= 8
-//                                     ) {
-//                                         continue;
-//                                     }
-//                                 }
-//                             }
-//                         }
-//                         break;
-//                     case 2:
-//                         if (virtualTable[i][j].state == 1) {
-//                             return;
-//                         }
-//                         if (virtualTable[i][j].state == 2) {
-//                             elementIconChild.textContent = "";
-//                             virtualTable[i][j].state == 0;
-//                             return;
-//                         }
-//                         virtualTable[i][j].state = 2;
-//                         elementIconChild.textContent = "B";
-//                         break;
-
-//                     default:
-//                         break;
-//                 }
-//             });
-
-//             let elementDivBox = document.createElement("div");
-//             elementDivBox.setAttribute("class", "box-fade");
-
-//             let elementIcon = document.createElement("i");
-
-//             elementDivBox.appendChild(elementIcon);
-//             elementCell.appendChild(elementDivBox);
-//             elementRow.appendChild(elementCell);
-//         }
-//         tagContentTable.appendChild(elementRow);
-//     }
-// };
-
-// genHtmlTable();
+    
+    let tagContentTable = document.getElementById("table-content");
+    tagContentTable.style.backgroundColor = 'green';
+    alert('victoria!');
+};
 
 let newGame = new buscaminasGame();
 newGame.genHtmlTable();

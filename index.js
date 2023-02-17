@@ -175,6 +175,7 @@ function addEvents() {
                 console.log(this);
                 console.log(`celda-${i}-${j}`);
                 let bandera = document.querySelector(`#celda-${i}-${j} i`);
+                
                 if (me.button == 0) {
                     if (ejeX[i][j].type == 1) {
                         document.querySelector(`#celda-${i}-${j}`).classList.add('danger')
