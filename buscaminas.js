@@ -24,10 +24,18 @@ function buscaminasGame(
         this.filas = 8;
         this.columnas = 8;
         this.minas = 8;
-    }else if (intNivel == 1) {
+    } else if (intNivel == 1) {
         this.filas = 16;
         this.columnas = 16;
         this.minas = 40;
+    } else if (intNivel == 2) {
+        this.filas = 16;
+        this.columnas = 30;
+        this.minas = 99;
+    } else {
+        this.filas = 9;
+        this.columnas = 9;
+        this.minas = 12;
     }
 }
 
@@ -75,19 +83,12 @@ buscaminasGame.prototype.genVirtualTable = function () {
 
         for (let j = 0; j < intColumnas; j++) {
             let objCell = new objCelda(i, j, 0, 0);
-
             let arrMinas = this.ArrMinas;
-            let arrMinasSize = arrMinas.length;
-            if (arrMinasSize > 0) {
-                for (let k = 0; k < arrMinasSize; k++) {
-                    if (
-                        arrMinas[k][0] === objCell.x &&
-                        arrMinas[k][1] === objCell.y
-                    ) {
-                        objCell.type = 1;
-                    }
+            arrMinas.forEach((e) => {
+                if (e[0] === objCell.x && e[1] === objCell.y) {
+                    objCell.type = 1;
                 }
-            }
+            });
 
             arrTableRow[j] = objCell;
         }
@@ -128,6 +129,7 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         if (this.virtualTable[i][j].type === 1) {
                             elementCelda.classList.add("danger");
                             alert("MINA!");
+                            this.perdida();
                             // ! LOSSE GAME
                         }
 
@@ -137,11 +139,11 @@ buscaminasGame.prototype.genHtmlTable = function () {
 
                         break;
                     case 1:
-                        if(this.virtualTable[i][j].state !== 1){
-                            console.log('scroll return');
+                        if (this.virtualTable[i][j].state !== 1) {
+                            console.log("scroll return");
                             return;
                         }
-                        console.log('scroll clic');
+                        console.log("scroll clic");
                         break;
                     case 2:
                         if (this.virtualTable[i][j].state == 1) {
@@ -190,7 +192,12 @@ buscaminasGame.prototype.genNumberMines = function (x, y) {
             if (i === 0 && j === 0) {
                 continue;
             }
-            if (x - i < 0 || y - j < 0 || x - i >= 8 || y - j >= 8) {
+            if (
+                x - i < 0 ||
+                y - j < 0 ||
+                x - i >= this.filas ||
+                y - j >= this.columnas
+            ) {
                 continue;
             }
 
@@ -200,6 +207,7 @@ buscaminasGame.prototype.genNumberMines = function (x, y) {
         }
     }
     this.virtualTable[x][y].number = intCountMinas;
+    console.log(`eje [${x}, ${y}] minas = ${intCountMinas}`);
 };
 
 buscaminasGame.prototype.openArea = function (x, y) {
@@ -212,7 +220,7 @@ buscaminasGame.prototype.openArea = function (x, y) {
 
     let elementCelda = document.getElementById(`celda-${x}-${y}`);
     elementCelda.classList.add("fade");
-    elementCelda.textContent =
+    elementCelda.childNodes[0].textContent =
         this.virtualTable[x][y].number == 0
             ? ""
             : this.virtualTable[x][y].number;
@@ -228,7 +236,12 @@ buscaminasGame.prototype.openArea = function (x, y) {
                 if (i === 0 && j === 0) {
                     continue;
                 }
-                if (x - i < 0 || y - j < 0 || x - i >= 8 || y - j >= 8) {
+                if (
+                    x - i < 0 ||
+                    y - j < 0 ||
+                    x - i >= this.filas ||
+                    y - j >= this.columnas
+                ) {
                     continue;
                 }
 
@@ -250,13 +263,55 @@ buscaminasGame.prototype.victoria = function () {
             }
         }
     }
-    
+
     let tagContentTable = document.getElementById("table-content");
-    tagContentTable.style.backgroundColor = 'green';
-    alert('victoria!');
+    tagContentTable.style.backgroundColor = "green";
+    alert("victoria!");
 };
 
-let newGame = new buscaminasGame();
-newGame.genHtmlTable();
-console.log(newGame.ArrMinas);
-console.log(newGame.virtualTable);
+buscaminasGame.prototype.perdida = function () {
+    let arrMinas = this.ArrMinas;
+    arrMinas.forEach(e=>{
+        let i = e[0];
+        let j = e[1];
+        let elementCelda = document.getElementById(`celda-${i}-${j}`);
+        elementCelda.classList.add("danger");
+        elementCelda.classList.add("fade");
+        elementCelda.childNodes[0].textContent =
+            this.virtualTable[i][j].number == 0
+                ? ""
+                : this.virtualTable[i][j].number;
+    })
+    // for (let i = 0; i < this.filas; i++) {
+    //     for (let j = 0; j < this.columnas; j++) {
+    //         if (this.virtualTable[i][j].type === 1) {
+    //             let elementCelda = document.getElementById(`celda-${i}-${j}`);
+    //             elementCelda.classList.add("danger");
+    //             elementCelda.classList.add("fade");
+    //             elementCelda.childNodes[0].textContent =
+    //                 this.virtualTable[i][j].number == 0
+    //                     ? ""
+    //                     : this.virtualTable[i][j].number;
+    //         }
+    //     }
+    // }
+};
+
+let juego = null;
+
+function nuevoJuego(a = 0, b = 0, c = 0) {
+    const tagContentTable = document.getElementById("table-content");
+    tagContentTable.innerHTML = "";
+    juego = new buscaminasGame(a);
+    juego.genHtmlTable();
+    // console.log(newGame.ArrMinas);
+    // console.log(newGame.virtualTable);
+}
+
+function resetJuego() {
+    const tagContentTable = document.getElementById("table-content");
+    tagContentTable.innerHTML = "";
+    juego.genHtmlTable();
+}
+
+nuevoJuego();
