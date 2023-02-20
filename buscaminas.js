@@ -127,7 +127,6 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         }
 
                         if (this.virtualTable[i][j].type === 1) {
-                            elementCelda.classList.add("danger");
                             alert("MINA!");
                             this.perdida();
                             // ! LOSSE GAME
@@ -282,19 +281,6 @@ buscaminasGame.prototype.perdida = function () {
                 ? ""
                 : this.virtualTable[i][j].number;
     })
-    // for (let i = 0; i < this.filas; i++) {
-    //     for (let j = 0; j < this.columnas; j++) {
-    //         if (this.virtualTable[i][j].type === 1) {
-    //             let elementCelda = document.getElementById(`celda-${i}-${j}`);
-    //             elementCelda.classList.add("danger");
-    //             elementCelda.classList.add("fade");
-    //             elementCelda.childNodes[0].textContent =
-    //                 this.virtualTable[i][j].number == 0
-    //                     ? ""
-    //                     : this.virtualTable[i][j].number;
-    //         }
-    //     }
-    // }
 };
 
 let juego = null;
