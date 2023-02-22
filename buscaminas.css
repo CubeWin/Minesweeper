@@ -13,21 +13,36 @@
     );
     width: 100%;
     height: 100vh;
-    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: auto;
 }
+.bg-cw-wall {
+    background: rgb(238, 174, 202);
+    background: radial-gradient(
+        circle,
+        rgba(238, 174, 202, 1) 0%,
+        rgba(148, 187, 233, 1) 100%
+    );
+}
 
-.display-box{
-    border: 1px solid rgba(255, 255, 255, 0.6);
+.h-custom__cw {
+    height: calc(100% - 60px);
+}
+
+.display-box {
+    /* border: 1px solid rgba(255, 255, 255, 0.6);
     box-shadow: -10px -10px 20px rgba(250, 251, 255, 0.5),
         10px 10px 20px rgba(22, 24, 29, 0.2);
-        border-radius: 10px;
-        max-height: 100vh;
-        max-width: 100vw;
-        overflow: auto;
+        border-radius: 10px; */
+    width: 240px;
+    margin: auto;
+    margin-bottom: 10px;
+    max-height: 90vh;
+    max-width: 90vw;
+    overflow: auto;
+    position: relative;
 }
 
 .display-box::before {
@@ -35,21 +50,21 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(218, 218, 218, 0.3);
+    background-color: rgba(255, 255, 255, 0.3);
     border-radius: 5px;
     filter: blur(1);
 }
 
-.box-buttons{
+.box-buttons {
     padding-left: 5px;
     padding-right: 5px;
     padding-top: 10px;
 }
 
-.cw__btn{
+.cw__btn {
     padding: 8px;
     border-radius: 5px;
     border: 2px solid rgba(218, 218, 218, 0.3);
@@ -57,31 +72,21 @@
     background-color: rgba(218, 218, 218, 0.7);
 }
 
-.table-responsive{
-    overflow: auto;
-}
-
 table {
     padding: 5px;
 }
 
-
 table td {
     cursor: pointer;
-    background-color: rgba(3, 3, 3, 0);
-    width: 60px !important;
-
 }
 
 .block-content {
-    position: relative;
     width: 60px;
     height: 60px;
 }
 
 .box-fade {
     background-color: rgba(123, 43, 177, 0.479);
-    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,7 +97,7 @@ table td {
     left: 0;
     margin: 1px;
     border-radius: 5px;
-    border: 1px solid rgba(35, 44, 44, 0.3);
+    border: 1px solid rgba(103, 69, 119, 0.3);
     transition: all 2ss ease-in-out;
 }
 
@@ -101,7 +106,36 @@ table td {
     border: 1px solid rgba(35, 44, 44, 0.3);
 }
 
-.danger {
+.danger div {
     background-color: brown !important;
     color: aliceblue !important;
+}
+
+
+.cw_btn-menu{
+    box-shadow: inset 0px 0px 3px 1px rgba(107, 107, 107, 0.2);
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.cw_btn-menu:hover{
+    box-shadow: inset 0px 0px 8px 4px rgba(235, 235, 235, 0.5)
+}
+
+.cw-bg-back{
+    box-shadow: 0px 0px 5px rgba(56, 56, 56, 0.3);
+    border-left: 1px solid rgba(235, 235, 235, 0.5);
+}
+
+.cw-bg-back::before{
+    content: '';
+    background-color: rgba(255, 255, 255, 0.2);
+    filter: blur(3px);
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    
 }

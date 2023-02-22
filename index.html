@@ -2,71 +2,96 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        #content {
-            background: plum;
-            width: 100%;
-            height: 100vh;
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        table {
-            border: solid 1px black;
-        }
-
-        table td {
-            width: 30px;
-            height: 30px;
-            border: solid 1px black;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .block-content {
-            position: relative;
-        }
-
-        .box-fade {
-            background-color: rgb(123, 43, 177);
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 9;
-            top: 0;
-            left: 0;
-        }
-
-        .fade>div {
-            background-color: transparent !important;
-        }
-
-        .danger {
-            background-color: brown;
-            color: aliceblue;
-        }
-    </style>
+    <link rel="stylesheet" href="./buscaminas.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
 </head>
 
 <body>
-    <div id="content">
-        <table>
-            <tbody id="table-content">
-            </tbody>
-        </table>
+    <div class="w-full bg-cw-wall h-screen relative overflow-hidden">
+        <div class="sticky top-0 z-1 h-[60px]">
+            <div class="px-5">
+                <div class="flex items-center justify-between py-3 md:justify-start md:space-x-10">
+                    <div class="flex justify-start lg:w-0 lg:flex-1">
+                        <a href="#">
+                            <img class="h-8 w-auto sm:h-10" src="./assets/image/cubewin.svg" alt="CubeWin">
+                        </a>
+                        <span class="flex items-center text-2xl font-bold text-white">&nbsp;Buscaminas</span>
+                    </div>
+                    <div class="items-center justify-end md:flex md:flex-1 lg:w-0">
+                        <div class="" style="width: 50px;">
+                            <label class="cursor-pointer" for="check-option" id="tag-check">
+                                <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+                            </label>
+                            <input class="hidden" type="checkbox" name="check-option" id="check-option">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="option-menu" class="absolute w-auto h-custom__cw bottom-0 right-0 z-10" style="transition: all 2s ease-in-out;">
+            <div class="absolute right-0 top-0 h-screen w-60  px-1  cw-bg-back">
+                <div class="px-2 mb-2 mt-3">
+                    <p class="font-bold">Nuevo Juego</p>
+                </div>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuego()">
+                    Principiante
+                </button>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuego(1)">
+                    Intermedio
+                </button>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuego(2)">
+                    Avanzado
+                </button>
+                <div class="px-2 mb-2 mt-3">
+                    <p class="font-bold">Opciones de nivel</p>
+                </div>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="resetJuego(2)">
+                    Reiniciar
+                </button>
+                <div class="px-2 mb-2 mt-3">
+                    <p class="font-bold">Información</p>
+                </div>
+                <div class="px-2 mb-2 mt-3 text-xs">
+                    <ol>
+                        <li>
+                            <p><b>Click:</b> despejar cuadro</p>
+                        </li>
+                        <li>
+                            <p><b>Doble click:</b> despejar alrededor del cuadro despejado</p>
+                        </li>
+                        <li>
+                            <p><b>Click derecho:</b> colocar bandera</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-custom__cw max-w-screen p-5 overflow-auto">
+
+            <div>
+                <div>
+                    <div class="display-box">
+                        <div class="p-2 flex justify-between aling-center">
+                            <div class="p-2 rounded bg-white font-bold" id="contador_minas">000</div>
+                            <div class="p-1"><i class="fa fa-smile-o text-2xl" aria-hidden="true"></i></div>
+                            <div class="p-2 rounded bg-white font-bold">000</div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table-auto mx-auto">
+                    <tbody id="table-content"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <script src="./index.js"></script>
+    <script src="./buscaminas.js"></script>
     <script>
         function disableIE() {
             if (document.all) {
@@ -74,7 +99,10 @@
             }
         }
         function disableNS(e) {
-            if (document.layers || (document.getElementById && !document.all)) {
+            if (
+                document.layers ||
+                (document.getElementById && !document.all)
+            ) {
                 if (e.which == 2 || e.which == 3) {
                     return false;
                 }
@@ -83,12 +111,33 @@
         if (document.layers) {
             document.captureEvents(Event.MOUSEDOWN);
             document.onmousedown = disableNS;
-        }
-        else {
+        } else {
             document.onmouseup = disableNS;
             document.oncontextmenu = disableIE;
         }
         document.oncontextmenu = new Function("return false");
+
+        let tagBtnCheck = document.getElementById('tag-check');
+        let tagCheckMenu = document.getElementById('check-option');
+        let tagMenuView = document.getElementById('option-menu');
+
+        function validCheck() {
+            if (tagCheckMenu.checked == false) {
+                console.log('uncheck');
+                tagMenuView.classList.add('hidden');
+                tagBtnCheck.innerHTML=('<i class="fa fa-bars fa-2x" aria-hidden="true"></i>');
+            } else {
+                console.log('check');
+                tagMenuView.classList.remove('hidden');
+                tagBtnCheck.innerHTML=('<i class="fa fa-close fa-2x" aria-hidden="true"></i>');
+            }
+        }
+
+        validCheck();
+
+        tagCheckMenu.addEventListener('click', (e) => {
+            validCheck()
+        })
     </script>
 </body>
 

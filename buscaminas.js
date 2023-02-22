@@ -18,7 +18,7 @@ function buscaminasGame(
     this.minas = intMinas;
     this.virtualTable = [];
     this.ArrMinas = [];
-    this.banderas = intMinas;
+    this.isGameOver = false;
 
     if (intNivel == 0) {
         this.filas = 8;
@@ -37,6 +37,7 @@ function buscaminasGame(
         this.columnas = 9;
         this.minas = 12;
     }
+
 }
 
 buscaminasGame.prototype.genCoorMinas = function () {
@@ -97,21 +98,31 @@ buscaminasGame.prototype.genVirtualTable = function () {
 };
 
 buscaminasGame.prototype.genHtmlTable = function () {
-    const tagContentTable = document.getElementById("table-content");
+
     const intFilas = this.filas;
     const intColumnas = this.columnas;
+    const intBanderas = this.minas;
+
+    this.banderas = this.minas;
+    this.isGameOver = false;
 
     this.genCoorMinas();
     this.genVirtualTable();
+
 
     for (let i = 0; i < intFilas; i++) {
         let elementRow = document.createElement("tr");
 
         for (let j = 0; j < intColumnas; j++) {
-            let elementCell = document.createElement("td");
+            let elementTDCell = document.createElement("td");
+            let elementCell = document.createElement("div");
             elementCell.setAttribute("class", "block-content");
             elementCell.setAttribute("id", `celda-${i}-${j}`);
             elementCell.addEventListener("mouseup", (e) => {
+                if (this.isGameOver) {
+                    return;
+                }
+
                 let elementCelda = document.querySelector(`#celda-${i}-${j}`);
                 let elementIconChild = document.querySelector(
                     `#celda-${i}-${j} i`
@@ -127,7 +138,6 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         }
 
                         if (this.virtualTable[i][j].type === 1) {
-                            alert("MINA!");
                             this.perdida();
                             // ! LOSSE GAME
                         }
@@ -137,14 +147,18 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         this.openArea(i, j);
 
                         break;
+
                     case 1:
                         if (this.virtualTable[i][j].state !== 1) {
-                            console.log("scroll return");
                             return;
                         }
-                        console.log("scroll clic");
+                        this.openNear(i,j);
                         break;
+
                     case 2:
+                        const tagContadorMinas = document.getElementById("contador_minas");
+                        
+
                         if (this.virtualTable[i][j].state == 1) {
                             return;
                         }
@@ -152,18 +166,33 @@ buscaminasGame.prototype.genHtmlTable = function () {
                             elementIconChild.textContent = "";
                             this.virtualTable[i][j].state = 0;
                             this.banderas++;
+                            tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
                             return;
                         }
+                        if(this.banderas <= 0 ){
+                            return
+                        }
                         this.virtualTable[i][j].state = 2;
-                        elementIconChild.textContent = "B";
+                        elementIconChild.innerHTML = "<i class='fa fa-flag'></i>";
                         this.banderas--;
-                        break;
+
+                        tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
 
                     default:
                         break;
                 }
                 this.victoria();
             });
+            elementCell.addEventListener("dblclick", e =>{
+                if (this.isGameOver) {
+                    return;
+                }
+                if (this.virtualTable[i][j].state !== 1) {
+                    return;
+                }
+                this.openNear(i,j);
+                this.victoria();
+            })
 
             let elementDivBox = document.createElement("div");
             elementDivBox.setAttribute("class", "box-fade");
@@ -172,7 +201,8 @@ buscaminasGame.prototype.genHtmlTable = function () {
 
             elementDivBox.appendChild(elementIcon);
             elementCell.appendChild(elementDivBox);
-            elementRow.appendChild(elementCell);
+            elementTDCell.appendChild(elementCell)
+            elementRow.appendChild(elementTDCell);
 
             // create numbers
             this.genNumberMines(i, j);
@@ -180,7 +210,10 @@ buscaminasGame.prototype.genHtmlTable = function () {
                 this.virtualTable[i][j].number = -1;
             }
         }
+        const tagContentTable = document.getElementById("table-content");
+        const tagContadorMinas = document.getElementById("contador_minas");
         tagContentTable.appendChild(elementRow);
+        tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
     }
 };
 
@@ -219,10 +252,40 @@ buscaminasGame.prototype.openArea = function (x, y) {
 
     let elementCelda = document.getElementById(`celda-${x}-${y}`);
     elementCelda.classList.add("fade");
-    elementCelda.childNodes[0].textContent =
-        this.virtualTable[x][y].number == 0
+    elementCelda.childNodes[0].innerHTML =
+        (this.virtualTable[x][y].number == 0)
             ? ""
-            : this.virtualTable[x][y].number;
+            : (this.virtualTable[x][y].number == -1) ? '<i class="fa fa-bomb" aria-hidden="true"></i>' : this.virtualTable[x][y].number;
+
+    switch (this.virtualTable[x][y].number) {
+        case 1:
+            elementCelda.childNodes[0].style.color = 'blue';
+            break;
+        case 2:
+            elementCelda.childNodes[0].style.color = 'green';
+            break;
+        case 3:
+            elementCelda.childNodes[0].style.color = 'red';
+            break;
+        case 4:
+            elementCelda.childNodes[0].style.color = 'purple';
+            break;
+        case 5:
+            elementCelda.childNodes[0].style.color = 'marron';
+            break;
+        case 6:
+            elementCelda.childNodes[0].style.color = 'lightblue';
+            break;
+        case 7:
+            elementCelda.childNodes[0].style.color = 'black';
+            break;
+        case 8:
+            elementCelda.childNodes[0].style.color = 'gray';
+            break;
+        default:
+            break;
+    }
+
 
     this.virtualTable[x][y].state = 1;
 
@@ -250,6 +313,80 @@ buscaminasGame.prototype.openArea = function (x, y) {
     }
 };
 
+buscaminasGame.prototype.openNear = function (x, y){
+    if (
+        this.virtualTable[x][y].state !== 1
+    ) {
+        return;
+    }
+
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            if (i === 0 && j === 0) {
+                continue;
+            }
+            if (
+                x - i < 0 ||
+                y - j < 0 ||
+                x - i >= this.filas ||
+                y - j >= this.columnas
+            ) {
+                continue;
+            }
+
+            if (this.virtualTable[x - i][y - j].state === 1 || this.virtualTable[x - i][y - j].state === 2) {
+                continue;
+            }
+
+            let elementCelda = document.getElementById(`celda-${x - i}-${y - j}`);
+            elementCelda.classList.add("fade");
+
+
+            if (this.virtualTable[x - i][y - j].number === 0) {
+                elementCelda.childNodes[0].textContent = '';
+                console.log('open AREA');
+                this.openArea(x - i, y - j);
+            }else{
+                elementCelda.childNodes[0].textContent = this.virtualTable[x - i][y - j].number;
+                switch (this.virtualTable[x - i][y - j].number) {
+                    case 1:
+                        elementCelda.childNodes[0].style.color = 'blue';
+                        break;
+                    case 2:
+                        elementCelda.childNodes[0].style.color = 'green';
+                        break;
+                    case 3:
+                        elementCelda.childNodes[0].style.color = 'red';
+                        break;
+                    case 4:
+                        elementCelda.childNodes[0].style.color = 'purple';
+                        break;
+                    case 5:
+                        elementCelda.childNodes[0].style.color = 'marron';
+                        break;
+                    case 6:
+                        elementCelda.childNodes[0].style.color = 'lightblue';
+                        break;
+                    case 7:
+                        elementCelda.childNodes[0].style.color = 'black';
+                        break;
+                    case 8:
+                        elementCelda.childNodes[0].style.color = 'gray';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            this.virtualTable[x - i][y - j].state = 1;
+
+            if (this.virtualTable[x - i][y - j].type === 1){
+                this.perdida()
+            }
+        }
+    }
+}
+
 buscaminasGame.prototype.victoria = function () {
     for (let i = 0; i < this.filas; i++) {
         for (let j = 0; j < this.columnas; j++) {
@@ -264,7 +401,7 @@ buscaminasGame.prototype.victoria = function () {
     }
 
     let tagContentTable = document.getElementById("table-content");
-    tagContentTable.style.backgroundColor = "green";
+    // tagContentTable.style.backgroundColor = "green";
     alert("victoria!");
 };
 
@@ -276,11 +413,12 @@ buscaminasGame.prototype.perdida = function () {
         let elementCelda = document.getElementById(`celda-${i}-${j}`);
         elementCelda.classList.add("danger");
         elementCelda.classList.add("fade");
-        elementCelda.childNodes[0].textContent =
+        elementCelda.childNodes[0].innerHTML =
             this.virtualTable[i][j].number == 0
                 ? ""
-                : this.virtualTable[i][j].number;
-    })
+                : '<i class="fa fa-bomb" aria-hidden="true"></i>';
+    });
+    this.isGameOver = true;
 };
 
 let juego = null;
