@@ -127,6 +127,12 @@ buscaminasGame.prototype.genHtmlTable = function () {
                 console.log(e.button);
                 switch (e.button) {
                     case 0:
+                        let MineOrFlag = document.getElementById('cw_checkOpen');
+                        if (MineOrFlag.checked) {
+                            this.putFlag(i, j);
+                            return
+                        }
+
                         if (
                             this.virtualTable[i][j].state == 1 ||
                             this.virtualTable[i][j].state == 2
@@ -153,33 +159,7 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         break;
 
                     case 2:
-                        const tagContadorMinas =
-                            document.getElementById("contador_minas");
-
-                        if (this.virtualTable[i][j].state == 1) {
-                            return;
-                        }
-                        if (this.virtualTable[i][j].state == 2) {
-                            elementIconChild.textContent = "";
-                            this.virtualTable[i][j].state = 0;
-                            this.banderas++;
-                            tagContadorMinas.textContent = this.banderas
-                                .toString()
-                                .padStart(3, "0");
-                            return;
-                        }
-                        if (this.banderas <= 0) {
-                            return;
-                        }
-                        this.virtualTable[i][j].state = 2;
-                        elementIconChild.innerHTML =
-                            "<i class='fa fa-flag'></i>";
-                        this.banderas--;
-
-                        tagContadorMinas.textContent = this.banderas
-                            .toString()
-                            .padStart(3, "0");
-
+                        this.putFlag(i, j);
                     default:
                         break;
                 }
@@ -221,6 +201,32 @@ buscaminasGame.prototype.genHtmlTable = function () {
             .padStart(3, "0");
         tagModalResult.classList.add("hidden");
     }
+};
+
+buscaminasGame.prototype.putFlag = function (i, j) {
+    const tagContadorMinas = document.getElementById("contador_minas");
+    let elementIconChild = document.querySelector(`#celda-${i}-${j} i`);
+
+    if (this.virtualTable[i][j].state == 1) {
+        return;
+    }
+    if (this.virtualTable[i][j].state == 2) {
+        elementIconChild.textContent = "";
+        this.virtualTable[i][j].state = 0;
+        this.banderas++;
+        tagContadorMinas.textContent = this.banderas
+            .toString()
+            .padStart(3, "0");
+        return;
+    }
+    if (this.banderas <= 0) {
+        return;
+    }
+    this.virtualTable[i][j].state = 2;
+    elementIconChild.innerHTML = "<i class='fa fa-flag'></i>";
+    this.banderas--;
+
+    tagContadorMinas.textContent = this.banderas.toString().padStart(3, "0");
 };
 
 buscaminasGame.prototype.genNumberMines = function (x, y) {
@@ -513,5 +519,18 @@ function sizeSM() {
         tagCell[i].classList.remove("cw_cell-xl");
         tagCell[i].classList.remove("cw_cell-md");
         tagCell[i].classList.add("cw_cell-sm");
+    }
+}
+
+function changeState() {
+    let label = document.getElementById("tag_checkOpen");
+    let input = document.getElementById("cw_checkOpen");
+
+    if (input.checked == false) {
+        label.innerHTML =
+            '<i class="fa fa-bomb text-2xl" aria-hidden="true"></i>';
+    } else {
+        label.innerHTML =
+            '<i class="fa fa-flag text-2xl" aria-hidden="true"></i>';
     }
 }
