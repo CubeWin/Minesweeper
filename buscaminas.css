@@ -80,18 +80,38 @@ table td {
     cursor: pointer;
 }
 
-.block-content {
+.cw_cell-xl {
     width: 60px;
     height: 60px;
 }
+.cw_cell-md{
+    width: 40px;
+    height: 40px;
+}
+.cw_cell-sm{
+    width: 30px;
+    height: 30px;
+}
+
+.cw_cell-xl .box-fade{
+    width: 58px;
+    height: 58px;
+}
+.cw_cell-md .box-fade{
+    width: 38px;
+    height: 38px;
+}
+.cw_cell-sm .box-fade{
+    width: 28px;
+    height: 28px;
+}
+
 
 .box-fade {
     background-color: rgba(123, 43, 177, 0.479);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 58px;
-    height: 58px;
     z-index: 9;
     top: 0;
     left: 0;
@@ -113,24 +133,26 @@ table td {
 
 
 .cw_btn-menu{
-    box-shadow: inset 0px 0px 3px 1px rgba(107, 107, 107, 0.2);
+    box-shadow: inset 0px 0px 3px 1px rgba(107, 107, 107, 0.3);
     border-radius: 5px;
     transition: all 0.3s ease-in-out;
 }
 
 .cw_btn-menu:hover{
-    box-shadow: inset 0px 0px 8px 4px rgba(235, 235, 235, 0.5)
+    box-shadow: inset 0px 0px 8px 4px rgba(199, 199, 199, 0.5);
+    background-color: rgb(184, 250, 189);
 }
 
 .cw-bg-back{
     box-shadow: 0px 0px 5px rgba(56, 56, 56, 0.3);
     border-left: 1px solid rgba(235, 235, 235, 0.5);
+    z-index: 9;
 }
 
 .cw-bg-back::before{
     content: '';
-    background-color: rgba(255, 255, 255, 0.2);
-    filter: blur(3px);
+    background-color: rgba(231, 231, 231, 0.8);
+    filter: blur(6px);
     position: absolute;
     top: 0;
     right: 0;

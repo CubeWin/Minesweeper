@@ -33,11 +33,10 @@ function buscaminasGame(
         this.columnas = 30;
         this.minas = 99;
     } else {
-        this.filas = 9;
-        this.columnas = 9;
-        this.minas = 12;
+        this.filas = intFilas;
+        this.columnas = intColumnas;
+        this.minas = intMinas;
     }
-
 }
 
 buscaminasGame.prototype.genCoorMinas = function () {
@@ -98,7 +97,6 @@ buscaminasGame.prototype.genVirtualTable = function () {
 };
 
 buscaminasGame.prototype.genHtmlTable = function () {
-
     const intFilas = this.filas;
     const intColumnas = this.columnas;
     const intBanderas = this.minas;
@@ -109,14 +107,13 @@ buscaminasGame.prototype.genHtmlTable = function () {
     this.genCoorMinas();
     this.genVirtualTable();
 
-
     for (let i = 0; i < intFilas; i++) {
         let elementRow = document.createElement("tr");
 
         for (let j = 0; j < intColumnas; j++) {
             let elementTDCell = document.createElement("td");
             let elementCell = document.createElement("div");
-            elementCell.setAttribute("class", "block-content");
+            elementCell.setAttribute("class", "cw_cell-xl block-size");
             elementCell.setAttribute("id", `celda-${i}-${j}`);
             elementCell.addEventListener("mouseup", (e) => {
                 if (this.isGameOver) {
@@ -152,12 +149,12 @@ buscaminasGame.prototype.genHtmlTable = function () {
                         if (this.virtualTable[i][j].state !== 1) {
                             return;
                         }
-                        this.openNear(i,j);
+                        this.openNear(i, j);
                         break;
 
                     case 2:
-                        const tagContadorMinas = document.getElementById("contador_minas");
-                        
+                        const tagContadorMinas =
+                            document.getElementById("contador_minas");
 
                         if (this.virtualTable[i][j].state == 1) {
                             return;
@@ -166,33 +163,38 @@ buscaminasGame.prototype.genHtmlTable = function () {
                             elementIconChild.textContent = "";
                             this.virtualTable[i][j].state = 0;
                             this.banderas++;
-                            tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
+                            tagContadorMinas.textContent = this.banderas
+                                .toString()
+                                .padStart(3, "0");
                             return;
                         }
-                        if(this.banderas <= 0 ){
-                            return
+                        if (this.banderas <= 0) {
+                            return;
                         }
                         this.virtualTable[i][j].state = 2;
-                        elementIconChild.innerHTML = "<i class='fa fa-flag'></i>";
+                        elementIconChild.innerHTML =
+                            "<i class='fa fa-flag'></i>";
                         this.banderas--;
 
-                        tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
+                        tagContadorMinas.textContent = this.banderas
+                            .toString()
+                            .padStart(3, "0");
 
                     default:
                         break;
                 }
                 this.victoria();
             });
-            elementCell.addEventListener("dblclick", e =>{
+            elementCell.addEventListener("dblclick", (e) => {
                 if (this.isGameOver) {
                     return;
                 }
                 if (this.virtualTable[i][j].state !== 1) {
                     return;
                 }
-                this.openNear(i,j);
+                this.openNear(i, j);
                 this.victoria();
-            })
+            });
 
             let elementDivBox = document.createElement("div");
             elementDivBox.setAttribute("class", "box-fade");
@@ -201,7 +203,7 @@ buscaminasGame.prototype.genHtmlTable = function () {
 
             elementDivBox.appendChild(elementIcon);
             elementCell.appendChild(elementDivBox);
-            elementTDCell.appendChild(elementCell)
+            elementTDCell.appendChild(elementCell);
             elementRow.appendChild(elementTDCell);
 
             // create numbers
@@ -212,8 +214,12 @@ buscaminasGame.prototype.genHtmlTable = function () {
         }
         const tagContentTable = document.getElementById("table-content");
         const tagContadorMinas = document.getElementById("contador_minas");
+        const tagModalResult = document.getElementById("cw_win_game");
         tagContentTable.appendChild(elementRow);
-        tagContadorMinas.textContent = this.banderas.toString().padStart(3, '0');
+        tagContadorMinas.textContent = this.banderas
+            .toString()
+            .padStart(3, "0");
+        tagModalResult.classList.add("hidden");
     }
 };
 
@@ -253,39 +259,40 @@ buscaminasGame.prototype.openArea = function (x, y) {
     let elementCelda = document.getElementById(`celda-${x}-${y}`);
     elementCelda.classList.add("fade");
     elementCelda.childNodes[0].innerHTML =
-        (this.virtualTable[x][y].number == 0)
+        this.virtualTable[x][y].number == 0
             ? ""
-            : (this.virtualTable[x][y].number == -1) ? '<i class="fa fa-bomb" aria-hidden="true"></i>' : this.virtualTable[x][y].number;
+            : this.virtualTable[x][y].number == -1
+            ? '<i class="fa fa-bomb" aria-hidden="true"></i>'
+            : this.virtualTable[x][y].number;
 
     switch (this.virtualTable[x][y].number) {
         case 1:
-            elementCelda.childNodes[0].style.color = 'blue';
+            elementCelda.childNodes[0].style.color = "blue";
             break;
         case 2:
-            elementCelda.childNodes[0].style.color = 'green';
+            elementCelda.childNodes[0].style.color = "green";
             break;
         case 3:
-            elementCelda.childNodes[0].style.color = 'red';
+            elementCelda.childNodes[0].style.color = "red";
             break;
         case 4:
-            elementCelda.childNodes[0].style.color = 'purple';
+            elementCelda.childNodes[0].style.color = "purple";
             break;
         case 5:
-            elementCelda.childNodes[0].style.color = 'marron';
+            elementCelda.childNodes[0].style.color = "marron";
             break;
         case 6:
-            elementCelda.childNodes[0].style.color = 'lightblue';
+            elementCelda.childNodes[0].style.color = "lightblue";
             break;
         case 7:
-            elementCelda.childNodes[0].style.color = 'black';
+            elementCelda.childNodes[0].style.color = "black";
             break;
         case 8:
-            elementCelda.childNodes[0].style.color = 'gray';
+            elementCelda.childNodes[0].style.color = "gray";
             break;
         default:
             break;
     }
-
 
     this.virtualTable[x][y].state = 1;
 
@@ -313,10 +320,8 @@ buscaminasGame.prototype.openArea = function (x, y) {
     }
 };
 
-buscaminasGame.prototype.openNear = function (x, y){
-    if (
-        this.virtualTable[x][y].state !== 1
-    ) {
+buscaminasGame.prototype.openNear = function (x, y) {
+    if (this.virtualTable[x][y].state !== 1) {
         return;
     }
 
@@ -334,44 +339,49 @@ buscaminasGame.prototype.openNear = function (x, y){
                 continue;
             }
 
-            if (this.virtualTable[x - i][y - j].state === 1 || this.virtualTable[x - i][y - j].state === 2) {
+            if (
+                this.virtualTable[x - i][y - j].state === 1 ||
+                this.virtualTable[x - i][y - j].state === 2
+            ) {
                 continue;
             }
 
-            let elementCelda = document.getElementById(`celda-${x - i}-${y - j}`);
+            let elementCelda = document.getElementById(
+                `celda-${x - i}-${y - j}`
+            );
             elementCelda.classList.add("fade");
 
-
             if (this.virtualTable[x - i][y - j].number === 0) {
-                elementCelda.childNodes[0].textContent = '';
-                console.log('open AREA');
+                elementCelda.childNodes[0].textContent = "";
+                console.log("open AREA");
                 this.openArea(x - i, y - j);
-            }else{
-                elementCelda.childNodes[0].textContent = this.virtualTable[x - i][y - j].number;
+            } else {
+                elementCelda.childNodes[0].textContent =
+                    this.virtualTable[x - i][y - j].number;
                 switch (this.virtualTable[x - i][y - j].number) {
                     case 1:
-                        elementCelda.childNodes[0].style.color = 'blue';
+                        elementCelda.childNodes[0].style.color = "blue";
                         break;
                     case 2:
-                        elementCelda.childNodes[0].style.color = 'green';
+                        elementCelda.childNodes[0].style.color = "green";
                         break;
                     case 3:
-                        elementCelda.childNodes[0].style.color = 'red';
+                        elementCelda.childNodes[0].style.color = "red";
                         break;
                     case 4:
-                        elementCelda.childNodes[0].style.color = 'purple';
+                        elementCelda.childNodes[0].style.color = "purple";
                         break;
                     case 5:
-                        elementCelda.childNodes[0].style.color = 'marron';
+                        elementCelda.childNodes[0].style.color = "marron";
                         break;
                     case 6:
-                        elementCelda.childNodes[0].style.color = 'lightblue';
+                        elementCelda.childNodes[0].style.color = "lightblue";
                         break;
                     case 7:
-                        elementCelda.childNodes[0].style.color = 'black';
+                        elementCelda.childNodes[0].style.color = "black";
                         break;
                     case 8:
-                        elementCelda.childNodes[0].style.color = 'gray';
+                        elementCelda.childNodes[0].style.color = "gray";
                         break;
                     default:
                         break;
@@ -380,12 +390,12 @@ buscaminasGame.prototype.openNear = function (x, y){
 
             this.virtualTable[x - i][y - j].state = 1;
 
-            if (this.virtualTable[x - i][y - j].type === 1){
-                this.perdida()
+            if (this.virtualTable[x - i][y - j].type === 1) {
+                this.perdida();
             }
         }
     }
-}
+};
 
 buscaminasGame.prototype.victoria = function () {
     for (let i = 0; i < this.filas; i++) {
@@ -400,14 +410,21 @@ buscaminasGame.prototype.victoria = function () {
         }
     }
 
-    let tagContentTable = document.getElementById("table-content");
+    const tagModalResult = document.getElementById("cw_win_game");
+    const tagIconResult = tagModalResult.querySelector("#cw_icon_game");
+    const tagMessageResult = tagModalResult.querySelector("#cw_message_game");
+    tagIconResult.innerHTML = `<i class="fa fa-trophy fa-4x text-sky-600" aria-hidden="true"</i>`;
+    tagMessageResult.classList.add("text-sky-600");
+    tagMessageResult.classList.add("font-bold");
+    tagMessageResult.textContent = "VICTORIA";
+    tagModalResult.classList.remove("hidden");
     // tagContentTable.style.backgroundColor = "green";
-    alert("victoria!");
+    // alert("victoria!");
 };
 
 buscaminasGame.prototype.perdida = function () {
     let arrMinas = this.ArrMinas;
-    arrMinas.forEach(e=>{
+    arrMinas.forEach((e) => {
         let i = e[0];
         let j = e[1];
         let elementCelda = document.getElementById(`celda-${i}-${j}`);
@@ -419,17 +436,49 @@ buscaminasGame.prototype.perdida = function () {
                 : '<i class="fa fa-bomb" aria-hidden="true"></i>';
     });
     this.isGameOver = true;
+
+    const tagModalResult = document.getElementById("cw_win_game");
+    const tagIconResult = tagModalResult.querySelector("#cw_icon_game");
+    const tagMessageResult = tagModalResult.querySelector("#cw_message_game");
+    tagIconResult.innerHTML = `<i class="fa fa-fire fa-4x text-rose-600" aria-hidden="true"></i>`;
+    tagMessageResult.textContent = "DERROTA";
+    tagMessageResult.classList.add("text-rose-600");
+    tagMessageResult.classList.add("font-bold");
+    tagModalResult.classList.remove("hidden");
 };
 
 let juego = null;
+let salvarNivel = 0;
+let salvarEjex = 0;
+let salvarEjey = 0;
+let salvarMinas = 0;
 
-function nuevoJuego(a = 0, b = 0, c = 0) {
+function nuevoJuego(a = 0, b = 0, c = 0, d = 0) {
     const tagContentTable = document.getElementById("table-content");
     tagContentTable.innerHTML = "";
-    juego = new buscaminasGame(a);
+    salvarNivel = a;
+
+    if (a === 3) {
+        juego = new buscaminasGame(a, b, c, d);
+    } else {
+        juego = new buscaminasGame(a);
+    }
     juego.genHtmlTable();
-    // console.log(newGame.ArrMinas);
-    // console.log(newGame.virtualTable);
+}
+
+function customNivel() {
+    const tagRow = document.getElementById("cw_row");
+    const tagColumn = document.getElementById("cw_column");
+    const tagMinas = document.getElementById("cw_mina");
+    salvarNivel = 3;
+    salvarEjex = tagRow.value;
+    salvarEjey = tagColumn.value;
+    salvarMinas = tagMinas.value;
+    nuevoJuego(salvarNivel, salvarEjex, salvarEjey, salvarMinas);
+}
+
+function nuevoJuegoNivel() {
+    nuevoJuego(salvarNivel, salvarEjex, salvarEjey, salvarMinas);
 }
 
 function resetJuego() {
@@ -439,3 +488,30 @@ function resetJuego() {
 }
 
 nuevoJuego();
+
+function sizeXL() {
+    let tagCell = document.getElementsByClassName("block-size");
+    for (let i = 0; i < tagCell.length; i++) {
+        tagCell[i].classList.remove("cw_cell-md");
+        tagCell[i].classList.remove("cw_cell-sm");
+        tagCell[i].classList.add("cw_cell-xl");
+    }
+}
+
+function sizeMD() {
+    let tagCell = document.getElementsByClassName("block-size");
+    for (let i = 0; i < tagCell.length; i++) {
+        tagCell[i].classList.remove("cw_cell-xl");
+        tagCell[i].classList.remove("cw_cell-sm");
+        tagCell[i].classList.add("cw_cell-md");
+    }
+}
+
+function sizeSM() {
+    let tagCell = document.getElementsByClassName("block-size");
+    for (let i = 0; i < tagCell.length; i++) {
+        tagCell[i].classList.remove("cw_cell-xl");
+        tagCell[i].classList.remove("cw_cell-md");
+        tagCell[i].classList.add("cw_cell-sm");
+    }
+}

@@ -34,11 +34,16 @@
             </div>
         </div>
 
-        <div id="option-menu" class="absolute w-auto h-custom__cw bottom-0 right-0 z-10" style="transition: all 2s ease-in-out;">
-            <div class="absolute right-0 top-0 h-screen w-60  px-1  cw-bg-back">
+        <div id="option-menu" class="absolute  w-auto h-custom__cw bottom-0 right-0 z-10"
+            style="transition: all 2s ease-in-out;">
+            <div class="absolute right-0 top-0 h-full w-60  px-1  cw-bg-back overflow-auto">
+
                 <div class="px-2 mb-2 mt-3">
                     <p class="font-bold">Nuevo Juego</p>
                 </div>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuegoNivel()">
+                    Nueva Partida
+                </button>
                 <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuego()">
                     Principiante
                 </button>
@@ -48,12 +53,41 @@
                 <button class="cw_btn-menu w-full py-3 my-1" onclick="nuevoJuego(2)">
                     Avanzado
                 </button>
+                <div class="flex justify-center items-center mt-2 h-[40px]">
+                    <label class="w-[40px] mx-1 text-right" for="cw_column">X:</label>
+                    <input class="w-[35px] mx-1 text-center rounded" type="number" id="cw_column" value="8" min="8" max="999">
+                    <label class="w-[40px] mx-1 text-right" for="cw_row">Y:</label>
+                    <input class="w-[35px] mx-1 text-center rounded" type="number" id="cw_row" value="8" min="8" max="999">
+                    <label class="w-[40px] mx-1 text-right" for="cw_mina">Minas:</label>
+                    <input class="w-[35px] mx-1 text-center rounded" type="number" id="cw_mina" value="8" min="8" max="999">
+                </div>
+                <button class="cw_btn-menu w-full py-3 my-1" onclick="customNivel()">
+                    Personalizado
+                </button>
                 <div class="px-2 mb-2 mt-3">
                     <p class="font-bold">Opciones de nivel</p>
                 </div>
                 <button class="cw_btn-menu w-full py-3 my-1" onclick="resetJuego(2)">
                     Reiniciar
                 </button>
+
+                <div class="px-2 mb-2 mt-3">
+                    <p class="font-bold">Tamaño de celdas</p>
+                </div>
+                <div class="flex justify-around w-full">
+                    <button class="cw_btn-menu w-[50px] h-[50px] my-1 flex justify-center items-center"
+                        onclick="sizeSM()">
+                        <div class="w-[15px] h-[15px] bg-purple-400 rounded"></div>
+                    </button>
+                    <button class="cw_btn-menu w-[50px] h-[50px] my-1 flex justify-center items-center"
+                        onclick="sizeMD()">
+                        <div class="w-[25px] h-[25px] bg-purple-400 rounded"></div>
+                    </button>
+                    <button class="cw_btn-menu w-[50px] h-[50px] my-1 flex justify-center items-center"
+                        onclick="sizeXL()">
+                        <div class="w-[35px] h-[35px] bg-purple-400 rounded"></div>
+                    </button>
+                </div>
                 <div class="px-2 mb-2 mt-3">
                     <p class="font-bold">Información</p>
                 </div>
@@ -73,7 +107,7 @@
             </div>
         </div>
 
-        <div class="h-custom__cw max-w-screen p-5 overflow-auto">
+        <div class="h-custom__cw max-w-screen p-5 overflow-auto relative">
 
             <div>
                 <div>
@@ -89,7 +123,28 @@
                     <tbody id="table-content"></tbody>
                 </table>
             </div>
+
+            <div id="cw_win_game" class="hidden absolute w-full h-full  top-0 left-0 flex justify-center items-center">
+                <div class="p-5 rounded bg-white w-[320px] relative flex justify-center">
+                    <div id="cw_icon_game"
+                        class="absolute top-[-55px] w-[90px]  h-[90px] bg-gray-100 flex justify-center items-center rounded-full shadow-lg shadow-teal-500/50">
+
+                        <i class="fa fa-trophy fa-4x" aria-hidden="true"></i>
+                    </div>
+                    <div class="text-center w-full">
+                        <h6 id="cw_message_game" class="mt-5 pt-4 mb-3">VICTORIA</h6>
+                        <div class="flex justify-around w-full">
+                            <button onclick="resetJuego()"
+                                class="ml-5 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">Reiniciar</button>
+                            <button onclick="nuevoJuegoNivel()"
+                                class="ml-5 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">Nuevo
+                                Juego</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
     <script src="./buscaminas.js"></script>
     <script>
@@ -125,11 +180,11 @@
             if (tagCheckMenu.checked == false) {
                 console.log('uncheck');
                 tagMenuView.classList.add('hidden');
-                tagBtnCheck.innerHTML=('<i class="fa fa-bars fa-2x" aria-hidden="true"></i>');
+                tagBtnCheck.innerHTML = ('<i class="fa fa-bars fa-2x" aria-hidden="true"></i>');
             } else {
                 console.log('check');
                 tagMenuView.classList.remove('hidden');
-                tagBtnCheck.innerHTML=('<i class="fa fa-close fa-2x" aria-hidden="true"></i>');
+                tagBtnCheck.innerHTML = ('<i class="fa fa-close fa-2x" aria-hidden="true"></i>');
             }
         }
 
